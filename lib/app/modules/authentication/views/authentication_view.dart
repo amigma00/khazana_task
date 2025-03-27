@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
 import 'package:get/get.dart';
-import 'package:get/get_connect/http/src/utils/utils.dart';
+
 import 'package:khazana_task/app/components/gradient_text.dart';
 import 'package:khazana_task/app/components/khazana_button.dart';
 import 'package:khazana_task/app/components/khazana_textfield.dart';
@@ -200,7 +200,6 @@ class AuthenticationView extends GetView<AuthenticationController> {
   }
 
   String maskPhoneNumber(String phoneNumber) {
-    
     if (phoneNumber.length < 4) return phoneNumber; // Handle short numbers
     return '${phoneNumber.substring(0, 3)}*****${phoneNumber.substring(phoneNumber.length - 3)}';
   }

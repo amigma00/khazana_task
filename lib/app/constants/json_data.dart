@@ -1,4 +1,6 @@
-const data = {
+import 'package:khazana_task/app/models/stock_model.dart';
+
+const jsonData = {
   "funds": [
     {
       "id": 1,
@@ -262,3 +264,8 @@ const data = {
     }
   ]
 };
+
+List<Map<String, Object>>? fundsList = jsonData['funds'];
+
+final List<Stocks> searchStocks =
+    fundsList!.map((fund) => Stocks.fromJson(fund)).toList();

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 import 'package:khazana_task/app/constants/app_colors.dart';
+import 'package:khazana_task/app/services/get_storage.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'app/routes/app_pages.dart';
@@ -13,6 +14,8 @@ void main() async {
     anonKey:
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVjeHdtaXBkYmZudGRhemZnaXltIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI4NTI5NDYsImV4cCI6MjA1ODQyODk0Nn0.KHBBzkAjwnD8Y5GTEs0bsbhMfvUgMCcvaljTi2rkFDw',
   );
+
+  Get.put(StorageService());
 
   runApp(
     GestureDetector(

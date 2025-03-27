@@ -1,6 +1,6 @@
 class Stocks {
   final String? name;
-  final String? id;
+  final int? id;
   final String? category;
   final double? nav;
   final Change? change;
@@ -19,7 +19,7 @@ class Stocks {
 
   Stocks.fromJson(Map<String, dynamic> json)
       : name = json['name'] as String?,
-        id = json['id'] as String?,
+        id = json['id'] as int?,
         category = json['category'] as String?,
         nav = json['nav'] as double?,
         change = (json['change'] as Map<String, dynamic>?) != null

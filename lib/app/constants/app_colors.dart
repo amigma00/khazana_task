@@ -8,4 +8,5 @@ class AppColors {
   static const Color textFieldFillColor = Color(0xFF262626);
   static const Color errorColor = Color(0xFFEC817D);
   static const Color bottomSheetBG = Color(0xff1B1A1A);
+  static const Color green = Color(0xff4CAF50);
 }

@@ -8,6 +8,8 @@ import 'package:khazana_task/app/components/khazana_textfield.dart';
 import 'package:khazana_task/app/components/text_extension.dart';
 import 'package:khazana_task/app/constants/app_colors.dart';
 import 'package:khazana_task/app/constants/app_images.dart';
+import 'package:khazana_task/app/constants/json_data.dart';
+import 'package:khazana_task/app/models/stock_model.dart';
 
 import '../controllers/watchlist_controller.dart';
 
@@ -54,7 +56,9 @@ class WatchlistView extends GetView<WatchlistController> {
               (index) {
                 return Tab(
                   height: 25,
-                  child: controller.watchlists[index]
+                  child: controller.watchlists.entries
+                      .toList()[index]
+                      .key
                       .toString()
                       .textGilroy400(10)
                       .paddingSymmetric(horizontal: 20),
@@ -64,26 +68,175 @@ class WatchlistView extends GetView<WatchlistController> {
         Gap(20),
         Expanded(
           child: TabBarView(
-            controller: controller.tabController,
-            children: List.generate(
-              controller.watchlists.length,
-              (index) {
-                return ListView.builder(
-                  itemCount: 50,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      title: 'Company Name'.textGilroy400(14),
-                      subtitle: 'Company Symbol'.textGilroy400(12),
-                      trailing: '₹ 1000'.textGilroy400(14),
-                    );
-                  },
-                );
-              },
-            ),
-          ),
+              controller: controller.tabController,
+              children:
+                  controller.watchlists.keys.map((e) => stockList(e)).toList()
+
+              // List.generate(
+              //   controller.watchlists.length,
+              //   (index) {
+              //     return stockList(controller.watchlists);
+              //   },
+              // ),
+              ),
         )
       ],
     );
+  }
+
+  Widget stockList(String watchlist) {
+    List<Stocks> stocks = controller.watchlists[watchlist] ?? [];
+    controller.isAddStock.value = false;
+    return GetBuilder(builder: (WatchlistController controller) {
+      if (controller.isAddStock.value) {
+        return searchStock(watchlist);
+      } else if (stocks.isEmpty) {
+        return noStock();
+      } else {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            KhazanaButton(
+              onPressed: () => controller.onAddToWatchlistTap(),
+              color: Colors.transparent,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.add,
+                    color: AppColors.primaryColor,
+                  ),
+                  Gap(8),
+                  'Add'.textGilroy400(
+                    14,
+                    color: AppColors.primaryColor,
+                  )
+                ],
+              ),
+            ).paddingSymmetric(horizontal: 24),
+            Expanded(
+              child: ListView.separated(
+                separatorBuilder: (context, index) => Gap(16),
+                padding: EdgeInsets.symmetric(horizontal: 24),
+                itemCount: stocks.length,
+                itemBuilder: (context, index) {
+                  return Dismissible(
+                    direction: DismissDirection.endToStart,
+                    background: SizedBox.shrink(),
+                    secondaryBackground: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        color: Colors.red,
+                      ),
+                      alignment: Alignment.centerRight,
+                      padding: EdgeInsets.only(right: 20),
+                      child: SvgPicture.asset(AppImages.trash),
+                    ),
+                    key: UniqueKey(),
+                    child: Card(
+                      margin: EdgeInsets.zero,
+                      color: AppColors.textFieldFillColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        side:
+                            BorderSide(width: 0.5, color: AppColors.labelGrey2),
+                      ),
+                      child: Column(
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(
+                                      child: stocks[index]
+                                          .name
+                                          .toString()
+                                          .textGilroy400(14)),
+                                  Row(
+                                    children: [
+                                      'NAV'.textGilroy400(12,
+                                          color: AppColors.labelGrey),
+                                      Gap(4),
+                                      '₹${stocks[index].nav?.toStringAsFixed(2)}'
+                                          .textGilroy400(14)
+                                    ],
+                                  )
+                                ],
+                              ),
+                              Gap(8),
+                              Row(
+                                children: [
+                                  stocks[index]
+                                      .category
+                                      .toString()
+                                      .textGilroy400(12,
+                                          color: AppColors.labelGrey),
+                                  Spacer(),
+                                  '1D'.textGilroy400(12,
+                                      color: AppColors.labelGrey),
+                                  Gap(2),
+                                  '${stocks[index].change?.day?.toStringAsFixed(2)}%'
+                                      .textGilroy400(12, color: AppColors.green)
+                                ],
+                              )
+                            ],
+                          ),
+                          Gap(12),
+                          Divider(thickness: .5),
+                          Gap(12),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  '1Y'.textGilroy400(12,
+                                      color: AppColors.labelGrey),
+                                  Gap(2),
+                                  '${stocks[index].change?.year?.toStringAsFixed(2)}%'
+                                      .textGilroy400(12, color: AppColors.green)
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  '3Y'.textGilroy400(12,
+                                      color: AppColors.labelGrey),
+                                  Gap(2),
+                                  '${stocks[index].change?.yearT?.toStringAsFixed(2)}%'
+                                      .textGilroy400(12, color: AppColors.green)
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  '5Y'.textGilroy400(12,
+                                      color: AppColors.labelGrey),
+                                  Gap(2),
+                                  '${stocks[index].change?.yearF?.toStringAsFixed(2)}%'
+                                      .textGilroy400(12, color: AppColors.green)
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  'Exp. Ratio'.textGilroy400(12,
+                                      color: AppColors.labelGrey),
+                                  Gap(2),
+                                  '${stocks[index].expenseRatio?.toStringAsFixed(2)}%'
+                                      .textGilroy400(12)
+                                ],
+                              ),
+                            ],
+                          )
+                        ],
+                      ).paddingAll(16),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        );
+      }
+    });
   }
 
   Center noStock() {
@@ -109,7 +262,7 @@ class WatchlistView extends GetView<WatchlistController> {
                 'Add to Watchlist'.textGilroy400(14)
               ],
             ).paddingSymmetric(horizontal: 16),
-            onPressed: () {},
+            onPressed: () => controller.onAddToWatchlistTap(),
           )
         ],
       ),
@@ -182,5 +335,83 @@ class WatchlistView extends GetView<WatchlistController> {
         ),
         backgroundColor: AppColors.bottomSheetBG,
         shape: RoundedRectangleBorder());
+  }
+
+  Widget searchStock(String watchlist) {
+    List<Stocks> stocks = controller.watchlists[watchlist] ?? [];
+    RxString keyword = ''.obs;
+    List<Stocks> getSortedList() {
+      return searchStocks
+          .where(
+            (p0) => p0.name?.toLowerCase().contains(keyword) ?? false,
+          )
+          .toList();
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: KhazanaTextfield(
+                prefixIcon: Icon(
+                  Icons.search,
+                  color: Colors.white,
+                  size: 20,
+                ).paddingOnly(left: 16),
+                controller: TextEditingController(),
+                onChanged: (p0) => keyword.value = p0,
+              ).paddingSymmetric(horizontal: 16),
+            ),
+            IconButton(
+                onPressed: () => controller.onAddToWatchlistTap(val: false),
+                icon: Icon(
+                  Icons.close,
+                  color: Colors.white,
+                ))
+          ],
+        ),
+        Expanded(
+            child: Obx(
+          () => ListView.separated(
+            padding: EdgeInsets.symmetric(horizontal: 24),
+            separatorBuilder: (context, index) => Divider(),
+            itemCount: getSortedList().length,
+            itemBuilder: (context, index) {
+              bool isAdded = stocks.any(
+                  (element) => element.name == getSortedList()[index].name);
+              return ListTile(
+                leading: ClipRRect(
+                  borderRadius: BorderRadius.circular(5),
+                  child: Image.network(
+                    getSortedList()[index].logoUrl ?? '',
+                    height: 28,
+                    width: 28,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                title: getSortedList()[index].name.toString().textGilroy400(12),
+                trailing: InkWell(
+                    onTap: () {
+                      Set<Stocks>? tempStocks =
+                          controller.watchlists[watchlist]?.toSet();
+                      tempStocks?.add(getSortedList()[index]);
+                      controller.watchlists[watchlist] =
+                          tempStocks?.toList() ?? [];
+                    },
+                    child: isAdded
+                        ? SvgPicture.asset(
+                            AppImages.bookmarkOn,
+                            width: 15,
+                            height: 17,
+                          )
+                        : SvgPicture.asset(AppImages.bookmarkOff)),
+              );
+            },
+          ),
+        ))
+      ],
+    );
   }
 }

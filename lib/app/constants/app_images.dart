@@ -5,4 +5,7 @@ class AppImages {
   static const String chart = 'assets/images/chart.svg';
   static const String watchlist = 'assets/images/watchlist.svg';
   static const String noWatchlist = 'assets/images/no_watchlist.svg';
+  static const String bookmarkOff = 'assets/images/bookmark_off.svg';
+  static const String bookmarkOn = 'assets/images/bookmark_on.svg';
+  static const String trash = 'assets/images/trash.svg';
 }
