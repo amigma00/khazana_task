@@ -2,10 +2,18 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 import 'package:khazana_task/app/constants/app_colors.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'app/routes/app_pages.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Supabase.initialize(
+    url: 'https://ecxwmipdbfntdazfgiym.supabase.co',
+    anonKey:
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVjeHdtaXBkYmZudGRhemZnaXltIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI4NTI5NDYsImV4cCI6MjA1ODQyODk0Nn0.KHBBzkAjwnD8Y5GTEs0bsbhMfvUgMCcvaljTi2rkFDw',
+  );
+
   runApp(
     GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -14,12 +22,24 @@ void main() {
         initialRoute: AppPages.INITIAL,
         theme: ThemeData(
           scaffoldBackgroundColor: Colors.black,
+          floatingActionButtonTheme: FloatingActionButtonThemeData(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(100),
+            ),
+            backgroundColor: AppColors.primaryColor,
+          ),
+          bottomNavigationBarTheme: BottomNavigationBarThemeData(
+            backgroundColor: Colors.black,
+            unselectedItemColor: AppColors.textFieldBorder,
+          ),
           colorScheme: ColorScheme.fromSwatch(
             primarySwatch: createMaterialColor(AppColors.primaryColor),
           ),
           appBarTheme: AppBarTheme(
             backgroundColor: Colors.black,
           ),
+          dividerTheme: DividerThemeData(
+              thickness: .2, space: .2, color: AppColors.textFieldBorder),
         ),
         getPages: AppPages.routes,
       ),

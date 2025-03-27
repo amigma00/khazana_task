@@ -3,10 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
 import 'package:get/get.dart';
+import 'package:get/get_connect/http/src/utils/utils.dart';
+import 'package:khazana_task/app/components/gradient_text.dart';
 import 'package:khazana_task/app/components/khazana_button.dart';
 import 'package:khazana_task/app/components/khazana_textfield.dart';
 import 'package:khazana_task/app/components/text_extension.dart';
 import 'package:khazana_task/app/constants/app_colors.dart';
+import 'package:pinput/pinput.dart';
 
 import '../controllers/authentication_controller.dart';
 
@@ -15,8 +18,20 @@ class AuthenticationView extends GetView<AuthenticationController> {
 
   @override
   Widget build(BuildContext context) {
-    RxBool isActive = false.obs;
-
+    final defaultPinTheme = PinTheme(
+      width: 28,
+      height: 60,
+      textStyle: TextStyle(
+        fontSize: 24,
+        fontWeight: FontWeight.w400,
+        color: Colors.white,
+      ),
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(color: AppColors.primaryColor, width: 3),
+        ),
+      ),
+    );
     return Scaffold(
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: Text.rich(
@@ -53,7 +68,7 @@ class AuthenticationView extends GetView<AuthenticationController> {
             ],
           ),
           textAlign: TextAlign.center,
-        ),
+        ).paddingSymmetric(horizontal: 16),
         appBar: AppBar(
           automaticallyImplyLeading: false,
         ),
@@ -75,68 +90,157 @@ class AuthenticationView extends GetView<AuthenticationController> {
               ],
             ),
             Gap(82),
-            PageView(
-              physics: BouncingScrollPhysics(),
-              children: [
-                Form(
-                  key: controller.formKey,
-                  child: KhazanaTextfield(
-                    label: 'Enter your phone number',
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your phone number';
-                      } else if (value.length != 10 ||
-                          GetUtils.hasMatch(value, r'^\d{11}$')) {
-                        return 'Please enter a valid phone number';
-                      }
-
-                      return null;
-                    },
-                    onChanged: (p0) => p0.isEmpty
-                        ? isActive.value = false
-                        : isActive.value = true,
-                    controller: controller.phoneController,
-                    prefix: '+91'.textGilroy700(14).paddingOnly(right: 8),
-                    keyboardType: TextInputType.phone,
-                  ),
-                ),
-                Container()
-              ],
+            Expanded(
+              child: PageView(
+                controller: controller.pageController,
+                clipBehavior: Clip.none,
+                physics: NeverScrollableScrollPhysics(),
+                children: [
+                  enterNumber(controller.isActive),
+                  otpSection(defaultPinTheme)
+                ],
+              ),
             ),
-            Gap(56),
-            Obx(
-              () => KhazanaButton(
-                isActive: isActive.value,
-                onPressed: () => controller.onProceedTap(),
-                text: 'Proceed',
-              ).paddingSymmetric(horizontal: 35),
-            )
           ],
         ).paddingSymmetric(horizontal: 24));
   }
-}
 
-class GradientText extends StatelessWidget {
-  final String text;
-  final TextStyle style;
-  final Gradient gradient;
+  Column otpSection(PinTheme defaultPinTheme) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        'Enter OTP'.textGilroy400(14),
+        Obx(
+          () => Pinput(
+            length: 6,
+            controller: controller.otpController.value,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            defaultPinTheme: defaultPinTheme,
+            onChanged: (value) {
+              if (value.length == 6) {
+                controller.isActive.value = true;
+              } else {
+                controller.isActive.value = !true;
+              }
+            },
+            followingPinTheme: defaultPinTheme.copyWith(
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom:
+                      BorderSide(color: AppColors.textFieldBorder, width: 3),
+                ),
+              ),
+            ),
+            errorPinTheme: defaultPinTheme.copyWith(
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(color: AppColors.errorColor, width: 3),
+                ),
+              ),
+            ),
+            errorTextStyle: TextStyle(
+              color: AppColors.errorColor,
+              fontSize: 12,
+              fontWeight: FontWeight.w400,
+            ),
+            errorText: 'Invalid OTP! Please try again',
+            forceErrorState: controller.isOtpError.value,
+          ),
+        ),
+        Gap(34),
+        Obx(
+          () => Row(
+            children: [
+              Visibility(
+                  visible: controller.timer.value.isEmpty,
+                  replacement:
+                      '${controller.timer.value} sec'.textGilroy400(12),
+                  child: "Didn't Receive OPT?".textGilroy400(12)),
+              KhazanaButton(
+                onPressed: controller.timer.value.isEmpty
+                    ? () => controller.onResendTap()
+                    : null,
+                text: "Resend",
+                color: Colors.transparent,
+                textColor: controller.timer.value.isEmpty
+                    ? AppColors.primaryColor
+                    : AppColors.labelGrey,
+              )
+            ],
+          ),
+        ),
+        Gap(16),
+        Row(
+          children: [
+            Obx(
+              () =>
+                  'OTP has been sent on ${maskPhoneNumber(controller.phoneController.value.text)}'
+                      .textGilroy400(12, color: AppColors.labelGrey),
+            ),
+            IconButton(
+                padding: EdgeInsets.zero,
+                visualDensity: VisualDensity.compact,
+                constraints: BoxConstraints(),
+                onPressed: () => controller.onEditNumberTap(),
+                icon: Icon(Icons.edit, size: 18, color: AppColors.labelGrey))
+          ],
+        ),
+        Gap(56),
+        Obx(
+          () => KhazanaButton(
+            isActive: controller.isActive.value,
+            onPressed: controller.isActive.value
+                ? () => controller.onOtpProceedTap()
+                : null,
+            text: 'Proceed',
+          ).paddingSymmetric(horizontal: 35),
+        )
+      ],
+    );
+  }
 
-  const GradientText(this.text,
-      {super.key, required this.gradient, required this.style});
+  String maskPhoneNumber(String phoneNumber) {
+    
+    if (phoneNumber.length < 4) return phoneNumber; // Handle short numbers
+    return '${phoneNumber.substring(0, 3)}*****${phoneNumber.substring(phoneNumber.length - 3)}';
+  }
 
-  @override
-  Widget build(BuildContext context) {
-    return ShaderMask(
-      shaderCallback: (bounds) {
-        return gradient.createShader(
-          Rect.fromLTWH(0, 0, bounds.width, bounds.height),
-        );
-      },
-      child: Text(
-        text,
-        style: style.copyWith(
-            color: Colors.white), // White ensures proper blending
-      ),
+  Column enterNumber(RxBool isActive) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Form(
+          key: controller.formKey,
+          child: KhazanaTextfield(
+            label: 'Enter your phone number',
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your phone number';
+              } else if (value.length != 10 ||
+                  GetUtils.hasMatch(value, r'^\d{11}$')) {
+                return 'Please enter a valid phone number';
+              }
+
+              return null;
+            },
+            onChanged: (p0) =>
+                p0.isEmpty ? isActive.value = false : isActive.value = true,
+            controller: controller.phoneController.value,
+            prefix: '+91'.textGilroy700(14).paddingOnly(right: 8),
+            keyboardType: TextInputType.phone,
+          ),
+        ),
+        Gap(56),
+        Obx(
+          () => KhazanaButton(
+            isActive: isActive.value,
+            onPressed: controller.isActive.value
+                ? () => controller.onNumberProceedTap()
+                : null,
+            text: 'Proceed',
+          ).paddingSymmetric(horizontal: 35),
+        )
+      ],
     );
   }
 }

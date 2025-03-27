@@ -10,17 +10,19 @@ class KhazanaTextfield extends StatelessWidget {
   final Widget? prefixIcon;
   final TextInputType? keyboardType;
   final void Function(String)? onChanged;
-  final String? label;
+  final String? label, hintText;
 
-  const KhazanaTextfield(
-      {super.key,
-      required this.controller,
-      this.validator,
-      this.prefix,
-      this.keyboardType,
-      this.prefixIcon,
-      this.onChanged,
-      this.label});
+  const KhazanaTextfield({
+    super.key,
+    required this.controller,
+    this.validator,
+    this.prefix,
+    this.keyboardType,
+    this.prefixIcon,
+    this.onChanged,
+    this.label,
+    this.hintText,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +40,11 @@ class KhazanaTextfield extends StatelessWidget {
           style: TextStyle(
               color: Colors.white, fontWeight: FontWeight.w300, fontSize: 14),
           decoration: InputDecoration(
+              hintText: hintText,
+              hintStyle: TextStyle(
+                  color: AppColors.textFieldBorder,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 12),
               prefix: prefix,
               prefixIcon: prefixIcon,
               prefixIconConstraints: BoxConstraints(

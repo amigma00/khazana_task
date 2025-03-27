@@ -3,22 +3,29 @@ import 'package:khazana_task/app/components/text_extension.dart';
 import 'package:khazana_task/app/constants/app_colors.dart';
 
 class KhazanaButton extends StatelessWidget {
-  final String text;
+  final String? text;
   final bool isActive;
-  final void Function() onPressed;
+  final void Function()? onPressed;
+  final Color? color;
+  final Color? textColor;
+  final Widget? child;
   const KhazanaButton(
       {super.key,
-      required this.text,
+      this.text,
       required this.onPressed,
-      this.isActive = true});
+      this.isActive = true,
+      this.color,
+      this.textColor,
+      this.child});
 
   @override
   Widget build(BuildContext context) {
     return TextButton(
-      onPressed: isActive ? onPressed : null,
+      onPressed: onPressed,
       style: TextButton.styleFrom(
-        backgroundColor:
-            isActive ? AppColors.primaryColor : AppColors.textFieldFillColor,
+        backgroundColor: isActive
+            ? color ?? AppColors.primaryColor
+            : AppColors.textFieldFillColor,
         shape: RoundedRectangleBorder(
           side: BorderSide(
               width: .75,
@@ -27,7 +34,8 @@ class KhazanaButton extends StatelessWidget {
         ),
         padding: EdgeInsets.symmetric(vertical: 11),
       ),
-      child: text.textGilroy300(14),
+      child: child ??
+          (text ?? '--').textGilroy300(14, color: textColor ?? Colors.white),
     );
   }
 }
