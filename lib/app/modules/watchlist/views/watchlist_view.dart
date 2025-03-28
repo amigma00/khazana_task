@@ -38,47 +38,42 @@ class WatchlistView extends GetView<WatchlistController> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        TabBar(
-            controller: controller.tabController,
-            tabAlignment: TabAlignment.start,
-            dividerHeight: 0,
-            isScrollable: true,
-            indicator: BoxDecoration(
-              color: AppColors.primaryColor,
-              borderRadius: BorderRadius.circular(5),
-            ),
-            labelPadding: EdgeInsets.only(right: 16),
-            labelColor: Colors.white,
-            unselectedLabelColor: Colors.white,
-            indicatorSize: TabBarIndicatorSize.label,
-            tabs: List.generate(
-              controller.watchlists.length,
-              (index) {
-                return Tab(
-                  height: 25,
-                  child: controller.watchlists.entries
-                      .toList()[index]
-                      .key
-                      .toString()
-                      .textGilroy400(10)
-                      .paddingSymmetric(horizontal: 20),
-                );
-              },
-            )).paddingSymmetric(horizontal: 24),
+        GestureDetector(
+          onLongPress: () => editwatchlistBS(),
+          child: TabBar(
+              controller: controller.tabController,
+              tabAlignment: TabAlignment.start,
+              dividerHeight: 0,
+              isScrollable: true,
+              indicator: BoxDecoration(
+                color: AppColors.primaryColor,
+                borderRadius: BorderRadius.circular(5),
+              ),
+              labelPadding: EdgeInsets.only(right: 16),
+              labelColor: Colors.white,
+              unselectedLabelColor: Colors.white,
+              indicatorSize: TabBarIndicatorSize.label,
+              tabs: List.generate(
+                controller.watchlists.length,
+                (index) {
+                  return Tab(
+                    height: 25,
+                    child: controller.watchlists.entries
+                        .toList()[index]
+                        .key
+                        .toString()
+                        .textGilroy400(10)
+                        .paddingSymmetric(horizontal: 20),
+                  );
+                },
+              )).paddingSymmetric(horizontal: 24),
+        ),
         Gap(20),
         Expanded(
           child: TabBarView(
               controller: controller.tabController,
               children:
-                  controller.watchlists.keys.map((e) => stockList(e)).toList()
-
-              // List.generate(
-              //   controller.watchlists.length,
-              //   (index) {
-              //     return stockList(controller.watchlists);
-              //   },
-              // ),
-              ),
+                  controller.watchlists.keys.map((e) => stockList(e)).toList()),
         )
       ],
     );
@@ -121,6 +116,10 @@ class WatchlistView extends GetView<WatchlistController> {
                 itemCount: stocks.length,
                 itemBuilder: (context, index) {
                   return Dismissible(
+                    onDismissed: (direction) {
+                      controller.onRemoveFromWatchlistTap(
+                          watchlist, stocks[index]);
+                    },
                     direction: DismissDirection.endToStart,
                     background: SizedBox.shrink(),
                     secondaryBackground: Container(
@@ -336,6 +335,8 @@ class WatchlistView extends GetView<WatchlistController> {
         backgroundColor: AppColors.bottomSheetBG,
         shape: RoundedRectangleBorder());
   }
+
+  editwatchlistBS() {}
 
   Widget searchStock(String watchlist) {
     List<Stocks> stocks = controller.watchlists[watchlist] ?? [];

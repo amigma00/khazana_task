@@ -58,6 +58,12 @@ class WatchlistController extends GetxController
     isAddStock.value = val;
     update();
   }
+
+  void onRemoveFromWatchlistTap(String watchlist, Stocks stock) {
+    // watchlists[watchlist]!.where((element) => element.id == stock.id).toList();
+    watchlists[watchlist]?.removeWhere((element) => element.id == stock.id);
+    storageService.saveFunds(watchlists);
+  }
 }
 
 enum WatchlistStatus { noWatchlist, loaded, error }
