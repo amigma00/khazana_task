@@ -44,7 +44,9 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.CHARTS,
-      page: () => const ChartsView(),
+      page: () => ChartsView(
+        stocks: Get.arguments,
+      ),
       binding: ChartsBinding(),
     ),
     GetPage(

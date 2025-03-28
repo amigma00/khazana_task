@@ -71,7 +71,7 @@ class NavigationView extends GetView<NavigationController> {
           body: PageView(
             physics: NeverScrollableScrollPhysics(),
             controller: controller.pageController,
-            children: [HomeView(), ChartsView(), WatchlistView()],
+            children: [HomeView(), Container(), WatchlistView()],
           ),
         ),
       ),

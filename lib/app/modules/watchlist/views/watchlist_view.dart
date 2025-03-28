@@ -10,6 +10,7 @@ import 'package:khazana_task/app/constants/app_colors.dart';
 import 'package:khazana_task/app/constants/app_images.dart';
 import 'package:khazana_task/app/constants/json_data.dart';
 import 'package:khazana_task/app/models/stock_model.dart';
+import 'package:khazana_task/app/routes/app_pages.dart';
 
 import '../controllers/watchlist_controller.dart';
 
@@ -45,10 +46,8 @@ class WatchlistView extends GetView<WatchlistController> {
               tabAlignment: TabAlignment.start,
               dividerHeight: 0,
               isScrollable: true,
-              indicator: BoxDecoration(
-                color: AppColors.primaryColor,
-                borderRadius: BorderRadius.circular(5),
-              ),
+              indicatorWeight: 0,
+              indicator: BoxDecoration(),
               labelPadding: EdgeInsets.only(right: 16),
               labelColor: Colors.white,
               unselectedLabelColor: Colors.white,
@@ -56,25 +55,41 @@ class WatchlistView extends GetView<WatchlistController> {
               tabs: List.generate(
                 controller.watchlists.length,
                 (index) {
-                  return Tab(
-                    height: 25,
-                    child: controller.watchlists.entries
-                        .toList()[index]
-                        .key
-                        .toString()
-                        .textGilroy400(10)
-                        .paddingSymmetric(horizontal: 20),
+                  return Obx(
+                    () => Container(
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: controller.currentTab.value == index
+                            ? AppColors.primaryColor
+                            : null,
+                        border: controller.currentTab.value == index
+                            ? null
+                            : Border.all(color: AppColors.labelGrey2),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      height: 25,
+                      child: controller.watchlists.entries
+                          .toList()[index]
+                          .key
+                          .toString()
+                          .textGilroy400(10)
+                          .paddingSymmetric(horizontal: 20),
+                    ),
                   );
                 },
               )).paddingSymmetric(horizontal: 24),
         ),
         Gap(20),
         Expanded(
-          child: TabBarView(
-              controller: controller.tabController,
-              children:
-                  controller.watchlists.keys.map((e) => stockList(e)).toList()),
-        )
+          child: Obx(
+            () => TabBarView(
+                physics: NeverScrollableScrollPhysics(),
+                controller: controller.tabController,
+                children: controller.watchlists.keys
+                    .map((e) => stockList(e))
+                    .toList()),
+          ),
+        ),
       ],
     );
   }
@@ -115,118 +130,126 @@ class WatchlistView extends GetView<WatchlistController> {
                 padding: EdgeInsets.symmetric(horizontal: 24),
                 itemCount: stocks.length,
                 itemBuilder: (context, index) {
-                  return Dismissible(
-                    onDismissed: (direction) {
-                      controller.onRemoveFromWatchlistTap(
-                          watchlist, stocks[index]);
-                    },
-                    direction: DismissDirection.endToStart,
-                    background: SizedBox.shrink(),
-                    secondaryBackground: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        color: Colors.red,
+                  return InkWell(
+                    onTap: () =>
+                        Get.toNamed(Routes.CHARTS, arguments: stocks[index]),
+                    child: Dismissible(
+                      onDismissed: (direction) {
+                        controller.onRemoveFromWatchlistTap(
+                            watchlist, stocks[index]);
+                      },
+                      direction: DismissDirection.endToStart,
+                      background: SizedBox.shrink(),
+                      secondaryBackground: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: Colors.red,
+                        ),
+                        alignment: Alignment.centerRight,
+                        padding: EdgeInsets.only(right: 20),
+                        child: SvgPicture.asset(AppImages.trash),
                       ),
-                      alignment: Alignment.centerRight,
-                      padding: EdgeInsets.only(right: 20),
-                      child: SvgPicture.asset(AppImages.trash),
-                    ),
-                    key: UniqueKey(),
-                    child: Card(
-                      margin: EdgeInsets.zero,
-                      color: AppColors.textFieldFillColor,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        side:
-                            BorderSide(width: 0.5, color: AppColors.labelGrey2),
+                      key: UniqueKey(),
+                      child: Card(
+                        margin: EdgeInsets.zero,
+                        color: AppColors.textFieldFillColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          side: BorderSide(
+                              width: 0.5, color: AppColors.labelGrey2),
+                        ),
+                        child: Column(
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                        child: stocks[index]
+                                            .name
+                                            .toString()
+                                            .textGilroy400(14)),
+                                    Row(
+                                      children: [
+                                        'NAV'.textGilroy400(12,
+                                            color: AppColors.labelGrey),
+                                        Gap(4),
+                                        '₹${stocks[index].nav?.toStringAsFixed(2)}'
+                                            .textGilroy400(14)
+                                      ],
+                                    )
+                                  ],
+                                ),
+                                Gap(8),
+                                Row(
+                                  children: [
+                                    stocks[index]
+                                        .category
+                                        .toString()
+                                        .textGilroy400(12,
+                                            color: AppColors.labelGrey),
+                                    Spacer(),
+                                    '1D'.textGilroy400(12,
+                                        color: AppColors.labelGrey),
+                                    Gap(2),
+                                    '${stocks[index].change?.day?.toStringAsFixed(2)}%'
+                                        .textGilroy400(12,
+                                            color: AppColors.green)
+                                  ],
+                                )
+                              ],
+                            ),
+                            Gap(12),
+                            Divider(thickness: .5),
+                            Gap(12),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    '1Y'.textGilroy400(12,
+                                        color: AppColors.labelGrey),
+                                    Gap(2),
+                                    '${stocks[index].change?.year?.toStringAsFixed(2)}%'
+                                        .textGilroy400(12,
+                                            color: AppColors.green)
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    '3Y'.textGilroy400(12,
+                                        color: AppColors.labelGrey),
+                                    Gap(2),
+                                    '${stocks[index].change?.yearT?.toStringAsFixed(2)}%'
+                                        .textGilroy400(12,
+                                            color: AppColors.green)
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    '5Y'.textGilroy400(12,
+                                        color: AppColors.labelGrey),
+                                    Gap(2),
+                                    '${stocks[index].change?.yearF?.toStringAsFixed(2)}%'
+                                        .textGilroy400(12,
+                                            color: AppColors.green)
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    'Exp. Ratio'.textGilroy400(12,
+                                        color: AppColors.labelGrey),
+                                    Gap(2),
+                                    '${stocks[index].expenseRatio?.toStringAsFixed(2)}%'
+                                        .textGilroy400(12)
+                                  ],
+                                ),
+                              ],
+                            )
+                          ],
+                        ).paddingAll(16),
                       ),
-                      child: Column(
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              Row(
-                                children: [
-                                  Expanded(
-                                      child: stocks[index]
-                                          .name
-                                          .toString()
-                                          .textGilroy400(14)),
-                                  Row(
-                                    children: [
-                                      'NAV'.textGilroy400(12,
-                                          color: AppColors.labelGrey),
-                                      Gap(4),
-                                      '₹${stocks[index].nav?.toStringAsFixed(2)}'
-                                          .textGilroy400(14)
-                                    ],
-                                  )
-                                ],
-                              ),
-                              Gap(8),
-                              Row(
-                                children: [
-                                  stocks[index]
-                                      .category
-                                      .toString()
-                                      .textGilroy400(12,
-                                          color: AppColors.labelGrey),
-                                  Spacer(),
-                                  '1D'.textGilroy400(12,
-                                      color: AppColors.labelGrey),
-                                  Gap(2),
-                                  '${stocks[index].change?.day?.toStringAsFixed(2)}%'
-                                      .textGilroy400(12, color: AppColors.green)
-                                ],
-                              )
-                            ],
-                          ),
-                          Gap(12),
-                          Divider(thickness: .5),
-                          Gap(12),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                children: [
-                                  '1Y'.textGilroy400(12,
-                                      color: AppColors.labelGrey),
-                                  Gap(2),
-                                  '${stocks[index].change?.year?.toStringAsFixed(2)}%'
-                                      .textGilroy400(12, color: AppColors.green)
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  '3Y'.textGilroy400(12,
-                                      color: AppColors.labelGrey),
-                                  Gap(2),
-                                  '${stocks[index].change?.yearT?.toStringAsFixed(2)}%'
-                                      .textGilroy400(12, color: AppColors.green)
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  '5Y'.textGilroy400(12,
-                                      color: AppColors.labelGrey),
-                                  Gap(2),
-                                  '${stocks[index].change?.yearF?.toStringAsFixed(2)}%'
-                                      .textGilroy400(12, color: AppColors.green)
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  'Exp. Ratio'.textGilroy400(12,
-                                      color: AppColors.labelGrey),
-                                  Gap(2),
-                                  '${stocks[index].expenseRatio?.toStringAsFixed(2)}%'
-                                      .textGilroy400(12)
-                                ],
-                              ),
-                            ],
-                          )
-                        ],
-                      ).paddingAll(16),
                     ),
                   );
                 },
@@ -336,7 +359,66 @@ class WatchlistView extends GetView<WatchlistController> {
         shape: RoundedRectangleBorder());
   }
 
-  editwatchlistBS() {}
+  editwatchlistBS() {
+    return Get.bottomSheet(
+        SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  "Edit Watchlist".textGilroy400(20),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: IconButton(
+                      icon: Icon(Icons.close, color: Colors.white),
+                      onPressed: () {
+                        controller.watchlistNameController.clear();
+                        Get.back();
+                      },
+                    ),
+                  ),
+                ],
+              ).paddingAll(16),
+              Divider(
+                thickness: .3,
+              ),
+              Form(
+                key: controller.creatWatchlistFormKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: controller.watchlists.keys
+                      .map((e) => Builder(builder: (context) {
+                            return KhazanaTextfield(
+                              onFieldSubmitted: (p0) =>
+                                  controller.onEditWatchlistSubmit(p0, e),
+                              suffix: InkWell(
+                                onTap: () => controller.removeWatchlist(e),
+                                child: SvgPicture.asset(
+                                  AppImages.trash,
+                                  color: AppColors.errorColor,
+                                ),
+                              ),
+                              validator: (p0) {
+                                if (p0 == null || p0.isEmpty) {
+                                  return 'Please enter watchlist name';
+                                }
+                                return null;
+                              },
+                              controller: TextEditingController(text: e),
+                            ).paddingOnly(bottom: 16);
+                          }))
+                      .toList(),
+                ).paddingSymmetric(horizontal: 50, vertical: 20),
+              ),
+            ],
+          ),
+        ),
+        backgroundColor: AppColors.bottomSheetBG,
+        shape: RoundedRectangleBorder());
+  }
 
   Widget searchStock(String watchlist) {
     List<Stocks> stocks = controller.watchlists[watchlist] ?? [];
@@ -411,7 +493,8 @@ class WatchlistView extends GetView<WatchlistController> {
               );
             },
           ),
-        ))
+        )),
+        Gap(100)
       ],
     );
   }

@@ -6,7 +6,7 @@ class KhazanaButton extends StatelessWidget {
   final String? text;
   final bool isActive;
   final void Function()? onPressed;
-  final Color? color;
+  final Color? color, borderColor;
   final Color? textColor;
   final Widget? child;
   const KhazanaButton(
@@ -16,7 +16,8 @@ class KhazanaButton extends StatelessWidget {
       this.isActive = true,
       this.color,
       this.textColor,
-      this.child});
+      this.child,
+      this.borderColor});
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +30,8 @@ class KhazanaButton extends StatelessWidget {
         shape: RoundedRectangleBorder(
           side: BorderSide(
               width: .75,
-              color: isActive ? Color(0xFF000000) : AppColors.textFieldBorder),
+              color: borderColor ??
+                  (isActive ? Color(0xFF000000) : AppColors.textFieldBorder)),
           borderRadius: BorderRadius.circular(10),
         ),
         padding: EdgeInsets.symmetric(vertical: 11),

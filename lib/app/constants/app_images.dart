@@ -8,4 +8,5 @@ class AppImages {
   static const String bookmarkOff = 'assets/images/bookmark_off.svg';
   static const String bookmarkOn = 'assets/images/bookmark_on.svg';
   static const String trash = 'assets/images/trash.svg';
+  static const String danger = 'assets/images/danger.svg';
 }

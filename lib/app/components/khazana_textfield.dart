@@ -6,11 +6,12 @@ import 'package:khazana_task/app/constants/app_colors.dart';
 class KhazanaTextfield extends StatelessWidget {
   final TextEditingController controller;
   final String? Function(String?)? validator;
-  final Widget? prefix;
+  final Widget? prefix, suffix;
   final Widget? prefixIcon;
   final TextInputType? keyboardType;
   final void Function(String)? onChanged;
   final String? label, hintText;
+  final void Function(String)? onFieldSubmitted;
 
   const KhazanaTextfield({
     super.key,
@@ -22,6 +23,8 @@ class KhazanaTextfield extends StatelessWidget {
     this.onChanged,
     this.label,
     this.hintText,
+    this.suffix,
+    this.onFieldSubmitted,
   });
 
   @override
@@ -33,6 +36,7 @@ class KhazanaTextfield extends StatelessWidget {
             visible: label != null,
             child: (label ?? '').textGilroy400(14).paddingOnly(bottom: 12)),
         TextFormField(
+          onFieldSubmitted: onFieldSubmitted,
           keyboardType: keyboardType,
           controller: controller,
           validator: validator,
@@ -47,6 +51,7 @@ class KhazanaTextfield extends StatelessWidget {
                   fontSize: 12),
               prefix: prefix,
               prefixIcon: prefixIcon,
+              suffix: suffix,
               prefixIconConstraints: BoxConstraints(
                 minWidth: 0,
                 minHeight: 0,
