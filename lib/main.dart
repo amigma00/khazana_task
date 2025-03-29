@@ -1,6 +1,9 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:khazana_task/app/constants/app_colors.dart';
 import 'package:khazana_task/app/services/get_storage.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -8,15 +11,15 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'app/routes/app_pages.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  await GetStorage.init(); // Initialize GetStorage
+
+  const String anonKey = String.fromEnvironment('ANON');
+
   await Supabase.initialize(
-    url: 'https://ecxwmipdbfntdazfgiym.supabase.co',
-    anonKey:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVjeHdtaXBkYmZudGRhemZnaXltIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI4NTI5NDYsImV4cCI6MjA1ODQyODk0Nn0.KHBBzkAjwnD8Y5GTEs0bsbhMfvUgMCcvaljTi2rkFDw',
-  );
+      url: 'https://ecxwmipdbfntdazfgiym.supabase.co', anonKey: anonKey);
 
   Get.put(StorageService());
-  print('authenticated or not${Get.find<StorageService>().isAuthenticated()}');
+
   runApp(
     GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -24,6 +27,7 @@ void main() async {
         title: "Application",
         initialRoute: AppPages.INITIAL,
         theme: ThemeData(
+          fontFamily: 'Gilroy',
           scaffoldBackgroundColor: Colors.black,
           floatingActionButtonTheme: FloatingActionButtonThemeData(
             shape: RoundedRectangleBorder(

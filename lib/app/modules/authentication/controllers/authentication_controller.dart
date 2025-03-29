@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+
 import 'package:get/get.dart';
 import 'package:khazana_task/app/components/dialog_helper.dart';
-import 'package:khazana_task/app/components/khazana_snackbar.dart';
+
 import 'package:khazana_task/app/constants/app_colors.dart';
 import 'package:khazana_task/app/routes/app_pages.dart';
 import 'package:khazana_task/app/services/get_storage.dart';
@@ -98,7 +98,7 @@ class AuthenticationController extends GetxController {
       onChangeRawSecond: (p0) {
         timer.value = StopWatchTimer.getDisplayTime(p0 * 1000,
             hours: false, minute: false, milliSecond: false);
-        print('time $timer');
+
       },
       onEnded: () => timer.value = '',
       presetMillisecond: 30 * 1000, // millisecond => minute.

@@ -13,6 +13,5 @@ class NavigationController extends GetxController {
   onIconTap(int value) {
     currentIndex.value = value;
     pageController.jumpToPage(currentIndex.value);
-    print(currentIndex.value);
   }
 }

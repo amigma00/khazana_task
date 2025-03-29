@@ -33,6 +33,7 @@ class AuthenticationView extends GetView<AuthenticationController> {
       ),
     );
     return Scaffold(
+        resizeToAvoidBottomInset: false,
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: Text.rich(
           TextSpan(
@@ -50,7 +51,6 @@ class AuthenticationView extends GetView<AuthenticationController> {
                 recognizer: TapGestureRecognizer()
                   ..onTap = () {
                     // Handle T&C link click
-                    print("T&C Clicked");
                   },
               ),
               TextSpan(text: ' and '),
@@ -62,7 +62,6 @@ class AuthenticationView extends GetView<AuthenticationController> {
                 recognizer: TapGestureRecognizer()
                   ..onTap = () {
                     // Handle Privacy Policy link click
-                    print("Privacy Policy Clicked");
                   },
               ),
             ],

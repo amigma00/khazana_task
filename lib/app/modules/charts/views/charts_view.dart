@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_sliding_toast/flutter_sliding_toast.dart';
 import 'package:gap/gap.dart';
 
 import 'package:get/get.dart';
 import 'package:khazana_task/app/components/khazana_button.dart';
-import 'package:khazana_task/app/components/khazana_snackbar.dart';
 import 'package:khazana_task/app/components/text_extension.dart';
 import 'package:khazana_task/app/constants/app_colors.dart';
 import 'package:khazana_task/app/models/stock_model.dart';
-import 'package:khazana_task/app/modules/charts/views/fl_charts.dart';
 import 'package:khazana_task/app/modules/charts/views/investment_calc.dart';
 
 import 'package:khazana_task/app/modules/charts/views/syncfusion_chart.dart';
@@ -254,7 +251,7 @@ class ChartsView extends GetView<ChartsController> {
                         (index) => Tab(
                           height: 26,
                           child: ['1M', '3M', '6M', '1Y', '3Y', 'MAX'][index]
-                              .textGilroy400(12),
+                              .textGilroy400(10),
                         ),
                       ))).paddingAll(4),
             ),

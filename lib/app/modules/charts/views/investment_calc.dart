@@ -13,6 +13,8 @@ class InvestmentController extends GetxController {
 class InvestmentCalculator extends StatelessWidget {
   final InvestmentController controller = Get.put(InvestmentController());
 
+  InvestmentCalculator({super.key});
+
   @override
   Widget build(BuildContext context) {
     return DecoratedBox(
@@ -49,9 +51,8 @@ class InvestmentCalculator extends StatelessWidget {
                     Divider()
                   ],
                 ),
-                Gap(38),
+                Gap(25),
                 Expanded(
-                  flex: 10,
                   child: DecoratedBox(
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(4),
@@ -131,7 +132,10 @@ class InvestmentCalculator extends StatelessWidget {
                 axisLine: AxisLine(width: 0),
                 majorTickLines: MajorTickLines(width: 0),
                 majorGridLines: MajorGridLines(width: 0),
-                labelStyle: TextStyle(color: Colors.white),
+                labelStyle: TextStyle(
+                    color: Colors.white,
+                    fontSize: 9,
+                    fontWeight: FontWeight.w400),
               ),
               primaryYAxis: NumericAxis(
                 isVisible: false, // Hides the Y-axis labels

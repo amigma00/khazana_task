@@ -1,8 +1,10 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:khazana_task/app/components/dialog_helper.dart';
+
 import 'package:khazana_task/app/components/khazana_button.dart';
 import 'package:khazana_task/app/components/khazana_snackbar.dart';
 import 'package:khazana_task/app/constants/app_colors.dart';
@@ -24,7 +26,6 @@ class WatchlistController extends GetxController
   void onInit() {
     super.onInit();
     watchlistMapListener();
-
     watchlists.value = storageService.getFunds().map(
           (key, value) => MapEntry(
               key,

@@ -1,3 +1,5 @@
+// ignore_for_file: constant_identifier_names
+
 import 'package:get/get.dart';
 
 import '../modules/authentication/bindings/authentication_binding.dart';
@@ -18,7 +20,8 @@ part 'app_routes.dart';
 class AppPages {
   AppPages._();
 
-  static const INITIAL = Routes.ONBOARDING;
+  // static const INITIAL = Routes.ONBOARDING;
+  static const INITIAL = Routes.NAVIGATION;
 
   static final routes = [
     GetPage(

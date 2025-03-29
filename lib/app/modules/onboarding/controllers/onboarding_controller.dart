@@ -6,11 +6,10 @@ class OnboardingController extends GetxController {
   void navigate() => Get.toNamed(Routes.AUTHENTICATION);
 
   @override
-  void onInit() {
-    // TODO: implement onInit
-    super.onInit();
+  void onReady() {
+    super.onReady();
+
     StorageService storageService = Get.find<StorageService>();
-    print(storageService.getFunds());
     bool isAuth = bool.tryParse(storageService.isAuthenticated()) ?? false;
     if (isAuth) {
       Get.offAllNamed(Routes.NAVIGATION);

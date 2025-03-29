@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -5,7 +7,7 @@ import 'package:get/get.dart';
 import 'package:khazana_task/app/components/text_extension.dart';
 import 'package:khazana_task/app/constants/app_colors.dart';
 import 'package:khazana_task/app/constants/app_images.dart';
-import 'package:khazana_task/app/modules/charts/views/charts_view.dart';
+
 import 'package:khazana_task/app/modules/home/views/home_view.dart';
 import 'package:khazana_task/app/modules/watchlist/views/watchlist_view.dart';
 

@@ -37,4 +37,10 @@ flutter:
   assets:
     - assets/images/
 
+  fonts:
+    - family: Gilroy
+      fonts:
+        - asset: assets/fonts/Gilroy-Regular.ttf
+
+
 
