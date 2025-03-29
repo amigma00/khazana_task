@@ -10,4 +10,6 @@ class AppColors {
   static const Color red = Color(0xFFDE504B);
   static const Color bottomSheetBG = Color(0xff1B1A1A);
   static const Color green = Color(0xff4CAF50);
+  static const Color yellow = Color(0xffFDA712);
+  static const Color nav = Color(0xffECFBFF);
 }

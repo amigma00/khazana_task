@@ -9,6 +9,8 @@ class KhazanaButton extends StatelessWidget {
   final Color? color, borderColor;
   final Color? textColor;
   final Widget? child;
+  final double? height, width, radius;
+  final EdgeInsetsGeometry? padding;
   const KhazanaButton(
       {super.key,
       this.text,
@@ -17,27 +19,37 @@ class KhazanaButton extends StatelessWidget {
       this.color,
       this.textColor,
       this.child,
-      this.borderColor});
+      this.borderColor,
+      this.height,
+      this.width,
+      this.padding,
+      this.radius});
 
   @override
   Widget build(BuildContext context) {
-    return TextButton(
-      onPressed: onPressed,
-      style: TextButton.styleFrom(
-        backgroundColor: isActive
-            ? color ?? AppColors.primaryColor
-            : AppColors.textFieldFillColor,
-        shape: RoundedRectangleBorder(
-          side: BorderSide(
-              width: .75,
-              color: borderColor ??
-                  (isActive ? Color(0xFF000000) : AppColors.textFieldBorder)),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        padding: EdgeInsets.symmetric(vertical: 11),
+    return SizedBox(
+      height: height,
+      width: width,
+      child: TextButton(
+        onPressed: onPressed,
+        style: TextButton.styleFrom(
+            backgroundColor: isActive
+                ? color ?? AppColors.primaryColor
+                : AppColors.textFieldFillColor,
+            shape: RoundedRectangleBorder(
+              side: BorderSide(
+                  width: .75,
+                  color: borderColor ??
+                      (isActive
+                          ? Color(0xFF000000)
+                          : AppColors.textFieldBorder)),
+              borderRadius: BorderRadius.circular(radius ?? 10),
+            ),
+            padding: padding ?? EdgeInsets.symmetric(vertical: 11),
+            minimumSize: Size(0, 0)),
+        child: child ??
+            (text ?? '--').textGilroy300(14, color: textColor ?? Colors.white),
       ),
-      child: child ??
-          (text ?? '--').textGilroy300(14, color: textColor ?? Colors.white),
     );
   }
 }
