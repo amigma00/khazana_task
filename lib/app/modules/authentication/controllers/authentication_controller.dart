@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:khazana_task/app/components/dialog_helper.dart';
+import 'package:khazana_task/app/components/khazana_snackbar.dart';
 import 'package:khazana_task/app/constants/app_colors.dart';
 import 'package:khazana_task/app/routes/app_pages.dart';
+import 'package:khazana_task/app/services/get_storage.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -63,10 +65,17 @@ class AuthenticationController extends GetxController {
         type: OtpType.sms,
       );
       DialogHelper.hideDialog();
-      print('User Signed In: ${response.session!.user}');
-      //TODO: navigate to home screen
 
-      Get.toNamed(Routes.NAVIGATION);
+      if (response.session?.user != null) {
+        Get.find<StorageService>().saveAuthStatus('true');
+        Get.toNamed(Routes.NAVIGATION);
+      } else {
+        Get.snackbar('Something went wrong', '',
+            backgroundColor: Colors.black,
+            colorText: Colors.white,
+            borderWidth: .5,
+            borderColor: AppColors.labelGrey);
+      }
     } on Exception catch (e) {
       DialogHelper.hideDialog();
       isOtpError.value = true;

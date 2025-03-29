@@ -14,4 +14,12 @@ class StorageService {
   void clearFunds() {
     _storage.remove('funds');
   }
+
+  void saveAuthStatus(String isAuthenticated) {
+    _storage.write('auth', isAuthenticated);
+  }
+
+  String isAuthenticated() {
+    return _storage.read('auth') ?? 'false';
+  }
 }

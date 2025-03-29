@@ -16,7 +16,7 @@ void main() async {
   );
 
   Get.put(StorageService());
-
+  print('authenticated or not${Get.find<StorageService>().isAuthenticated()}');
   runApp(
     GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
