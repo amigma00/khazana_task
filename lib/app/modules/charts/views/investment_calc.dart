@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:khazana_task/app/components/text_extension.dart';
+import 'package:khazana_task/app/constants/app_colors.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class InvestmentController extends GetxController {
-  var investmentAmount = 100000.0.obs;
+  var investmentAmount = 1.0.obs;
   var isOneTime = true.obs;
 }
 
@@ -12,116 +15,170 @@ class InvestmentCalculator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 600,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'If you invested',
-            style: TextStyle(color: Colors.white, fontSize: 18),
-          ),
-          Obx(() => Row(
-                children: [
-                  Text(
-                    '₹ ${controller.investmentAmount.value ~/ 1000} L',
-                    style: TextStyle(
+    return DecoratedBox(
+      decoration: BoxDecoration(
+          color: AppColors.textFieldFillColor,
+          border: Border.all(width: .5, color: AppColors.textFieldBorder),
+          borderRadius: BorderRadius.circular(8)),
+      child: Padding(
+        padding: EdgeInsets.all(14),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                'If you invested'.textGilroy400(14),
+                Gap(9),
+                Column(
+                  children: [
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Obx(
+                          () => '₹ ${controller.investmentAmount.value} L'
+                              .textGilroy400(14),
+                        ),
+                        Gap(7),
+                        Icon(
+                          Icons.edit_outlined,
+                          size: 15,
+                          color: AppColors.labelGrey2,
+                        )
+                      ],
+                    ),
+                    Divider()
+                  ],
+                ),
+                Gap(38),
+                Expanded(
+                  flex: 10,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(
+                            color: AppColors.textFieldBorder, width: .5)),
+                    child: DefaultTabController(
+                        length: 2,
+                        child: TabBar(
+                            labelPadding: EdgeInsets.zero,
+                            indicatorSize: TabBarIndicatorSize.tab,
+                            dividerHeight: 0,
+                            indicator: BoxDecoration(
+                                color: AppColors.primaryColor,
+                                borderRadius: BorderRadius.circular(4)),
+                            indicatorWeight: 3,
+                            tabs: List.generate(
+                              2,
+                              (index) => Tab(
+                                height: 23,
+                                child: ['1-Time', 'Monthly SIP'][index]
+                                    .textGilroy400(9),
+                              ),
+                            )).paddingAll(4)),
+                  ),
+                )
+              ],
+            ),
+            Gap(15),
+            Obx(() => Slider(
+                  padding: EdgeInsets.zero,
+                  value: controller.investmentAmount.value,
+                  min: 1,
+                  max: 10,
+                  divisions: 9,
+                  activeColor: AppColors.primaryColor,
+                  inactiveColor: AppColors.primaryColor.withValues(alpha: .2),
+                  onChanged: (value) {
+                    controller.investmentAmount.value = value;
+                  },
+                )),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                '₹ 1 L'.textGilroy400(9),
+                '₹ 10 L'.textGilroy400(9),
+              ],
+            ),
+            Gap(32),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    "This Fund's past returns".textGilroy400(12),
+                    Gap(4),
+                    'Profit % (Absolute Return)'
+                        .textGilroy400(9, color: AppColors.textFieldBorder)
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    '₹ ${controller.investmentAmount.value} L'
+                        .textGilroy400(12, color: AppColors.green),
+                    Gap(4),
+                    '355.3%'.textGilroy400(9)
+                  ],
+                ),
+              ],
+            ),
+            Gap(32),
+            SfCartesianChart(
+              plotAreaBorderWidth: 0,
+              margin: EdgeInsets.zero,
+              primaryXAxis: CategoryAxis(
+                axisLine: AxisLine(width: 0),
+                majorTickLines: MajorTickLines(width: 0),
+                majorGridLines: MajorGridLines(width: 0),
+                labelStyle: TextStyle(color: Colors.white),
+              ),
+              primaryYAxis: NumericAxis(
+                isVisible: false, // Hides the Y-axis labels
+              ),
+              series: [
+                StackedColumnSeries<ChartData, String>(
+                  dataSource: chartData,
+                  xValueMapper: (ChartData data, _) => data.category,
+                  yValueMapper: (ChartData data, _) => data.baseValue,
+                  color: AppColors.investCalcGrey, // Bottom dark part
+                ),
+                StackedColumnSeries<ChartData, String>(
+                  dataSource: chartData,
+                  xValueMapper: (ChartData data, _) => data.category,
+                  yValueMapper: (ChartData data, _) => data.growthValue,
+                  color: AppColors.investCalcGreen, // Top green part
+                  dataLabelMapper: (ChartData data, _) =>
+                      data.growthValue.toString(), // Labels on top
+                  dataLabelSettings: DataLabelSettings(
+                    isVisible: true,
+                    offset: Offset(0, 30),
+                    textStyle: TextStyle(
                         color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold),
+                        fontWeight: FontWeight.w400,
+                        fontSize: 9),
+                    labelAlignment: ChartDataLabelAlignment.top,
                   ),
-                  Icon(Icons.edit, color: Colors.white54, size: 16),
-                ],
-              )),
-          Obx(() => Slider(
-                value: controller.investmentAmount.value,
-                min: 100000,
-                max: 10000000,
-                divisions: 9,
-                activeColor: Colors.blue,
-                inactiveColor: Colors.white24,
-                onChanged: (value) {
-                  controller.investmentAmount.value = value;
-                },
-              )),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('₹ 1 L', style: TextStyle(color: Colors.white54)),
-              Text('₹ 10 L', style: TextStyle(color: Colors.white54)),
-            ],
-          ),
-          Obx(() => ToggleButtons(
-                borderColor: Colors.white24,
-                fillColor: Colors.blue,
-                selectedColor: Colors.white,
-                borderRadius: BorderRadius.circular(10),
-                isSelected: [
-                  controller.isOneTime.value,
-                  !controller.isOneTime.value
-                ],
-                onPressed: (index) {
-                  controller.isOneTime.value = index == 0;
-                },
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Text('1-Time', style: TextStyle(fontSize: 16)),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Text('Monthly SIP', style: TextStyle(fontSize: 16)),
-                  ),
-                ],
-              )),
-          SizedBox(height: 20),
-          Text(
-            "This Fund's past returns",
-            style: TextStyle(color: Colors.white, fontSize: 18),
-          ),
-          SfCartesianChart(
-            primaryXAxis: CategoryAxis(),
-            series: <CartesianSeries>[
-              ColumnSeries<ChartData, String>(
-                dataSource: [
-                  ChartData('Saving A/C', 119000, Colors.green),
-                  ChartData('Category Avg.', 363000, Colors.green),
-                  ChartData('Direct Plan', 455000, Colors.green),
-                ],
-                xValueMapper: (ChartData data, _) => data.label,
-                yValueMapper: (ChartData data, _) => data.value,
-                pointColorMapper: (ChartData data, _) => data.color,
-                dataLabelSettings: DataLabelSettings(isVisible: true),
-              )
-            ],
-          ),
-          Spacer(),
-          ToggleButtons(
-            borderColor: Colors.white24,
-            fillColor: Colors.blue,
-            selectedColor: Colors.white,
-            borderRadius: BorderRadius.circular(10),
-            isSelected: [false, false, false, false, false, true],
-            children: [
-              Text('1M'),
-              Text('3M'),
-              Text('6M'),
-              Text('1Y'),
-              Text('3Y'),
-              Text('MAX')
-            ],
-            onPressed: (index) {},
-          ),
-        ],
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
-class ChartData {
-  final String label;
-  final double value;
-  final Color color;
+final List<ChartData> chartData = [
+  ChartData('Saving A/C', 100000, 19000), // Base + Green Portion
+  ChartData('Category Avg.', 200000, 163000),
+  ChartData('Direct Plan', 200000, 255000),
+];
 
-  ChartData(this.label, this.value, this.color);
+class ChartData {
+  final String category;
+  final double baseValue;
+  final double growthValue;
+
+  ChartData(this.category, this.baseValue, this.growthValue);
 }

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_sliding_toast/flutter_sliding_toast.dart';
 import 'package:gap/gap.dart';
 
 import 'package:get/get.dart';
 import 'package:khazana_task/app/components/khazana_button.dart';
+import 'package:khazana_task/app/components/khazana_snackbar.dart';
 import 'package:khazana_task/app/components/text_extension.dart';
 import 'package:khazana_task/app/constants/app_colors.dart';
 import 'package:khazana_task/app/models/stock_model.dart';
@@ -256,6 +258,7 @@ class ChartsView extends GetView<ChartsController> {
                         ),
                       ))).paddingAll(4),
             ),
+            Gap(45),
             InvestmentCalculator()
           ],
         ),

@@ -4,6 +4,7 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:khazana_task/app/components/dialog_helper.dart';
 import 'package:khazana_task/app/components/khazana_button.dart';
+import 'package:khazana_task/app/components/khazana_snackbar.dart';
 import 'package:khazana_task/app/constants/app_colors.dart';
 import 'package:khazana_task/app/constants/app_images.dart';
 import 'package:khazana_task/app/models/stock_model.dart';
@@ -98,7 +99,7 @@ class WatchlistController extends GetxController
     }
   }
 
-  void removeWatchlist(String key) {
+  void removeWatchlist(String key, BuildContext context) {
     sureDelete().then(
       (value) {
         if (value == false) {
@@ -124,6 +125,8 @@ class WatchlistController extends GetxController
           );
           tabController.animateTo(0);
           currentTab.value = tabController.index;
+          khazanSnackbar(context,
+              msg: 'Your Watchlist has been deleted successfully');
         }
       },
     );

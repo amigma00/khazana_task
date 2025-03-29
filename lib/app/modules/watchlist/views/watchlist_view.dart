@@ -4,6 +4,7 @@ import 'package:gap/gap.dart';
 
 import 'package:get/get.dart';
 import 'package:khazana_task/app/components/khazana_button.dart';
+import 'package:khazana_task/app/components/khazana_snackbar.dart';
 import 'package:khazana_task/app/components/khazana_textfield.dart';
 import 'package:khazana_task/app/components/text_extension.dart';
 import 'package:khazana_task/app/constants/app_colors.dart';
@@ -21,26 +22,27 @@ class WatchlistView extends GetView<WatchlistController> {
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
         isExtended: true,
-        onPressed: () => createWatchlistBS(),
+        onPressed: () => createWatchlistBS(context),
         label: 'Watchlist'.textGilroy400(12),
         icon: Icon(Icons.add),
       ),
-      body: Obx(() => switchCase()),
+      body: Obx(() => switchCase(context)),
     );
   }
 
-  Widget switchCase() => switch (controller.watchlistState.value) {
+  Widget switchCase(BuildContext context) =>
+      switch (controller.watchlistState.value) {
         WatchlistStatus.noWatchlist => noWatchlist(),
-        WatchlistStatus.loaded => loadWatchlist(),
+        WatchlistStatus.loaded => loadWatchlist(context),
         WatchlistStatus.error => 'Something went wrong'.textGilroy400(12)
       };
 
-  Widget loadWatchlist() {
+  Widget loadWatchlist(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         GestureDetector(
-          onLongPress: () => editwatchlistBS(),
+          onLongPress: () => editwatchlistBS(context),
           child: TabBar(
               controller: controller.tabController,
               tabAlignment: TabAlignment.start,
@@ -297,7 +299,7 @@ class WatchlistView extends GetView<WatchlistController> {
             .textGilroy400(12, color: Colors.white));
   }
 
-  createWatchlistBS() {
+  createWatchlistBS(BuildContext context) {
     RxBool isActive = false.obs;
     return Get.bottomSheet(
         SafeArea(
@@ -346,7 +348,12 @@ class WatchlistView extends GetView<WatchlistController> {
                   ),
                   Gap(24),
                   Obx(() => KhazanaButton(
-                        onPressed: () => controller.createWatchlist(),
+                        onPressed: () {
+                          controller.createWatchlist();
+                          khazanSnackbar(context,
+                              msg:
+                                  'Your Watchlist has been created successfully');
+                        },
                         text: 'Create',
                         isActive: isActive.value,
                       )),
@@ -359,65 +366,68 @@ class WatchlistView extends GetView<WatchlistController> {
         shape: RoundedRectangleBorder());
   }
 
-  editwatchlistBS() {
+  editwatchlistBS(BuildContext context) {
     return Get.bottomSheet(
-        SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Stack(
-                alignment: Alignment.center,
-                children: [
-                  "Edit Watchlist".textGilroy400(20),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: IconButton(
-                      icon: Icon(Icons.close, color: Colors.white),
-                      onPressed: () {
-                        controller.watchlistNameController.clear();
-                        Get.back();
-                      },
-                    ),
+      SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                "Edit Watchlist".textGilroy400(20),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: IconButton(
+                    icon: Icon(Icons.close, color: Colors.white),
+                    onPressed: () {
+                      controller.watchlistNameController.clear();
+                      Get.back();
+                    },
                   ),
-                ],
-              ).paddingAll(16),
-              Divider(
-                thickness: .3,
-              ),
-              Form(
-                key: controller.creatWatchlistFormKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: controller.watchlists.keys
-                      .map((e) => Builder(builder: (context) {
-                            return KhazanaTextfield(
-                              onFieldSubmitted: (p0) =>
-                                  controller.onEditWatchlistSubmit(p0, e),
-                              suffix: InkWell(
-                                onTap: () => controller.removeWatchlist(e),
-                                child: SvgPicture.asset(
-                                  AppImages.trash,
-                                  color: AppColors.errorColor,
-                                ),
+                ),
+              ],
+            ).paddingAll(16),
+            Divider(
+              thickness: .3,
+            ),
+            Form(
+              key: controller.creatWatchlistFormKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: controller.watchlists.keys
+                    .map((e) => Builder(builder: (context) {
+                          return KhazanaTextfield(
+                            onFieldSubmitted: (p0) =>
+                                controller.onEditWatchlistSubmit(p0, e),
+                            suffix: InkWell(
+                              onTap: () =>
+                                  controller.removeWatchlist(e, context),
+                              child: SvgPicture.asset(
+                                AppImages.trash,
+                                color: AppColors.errorColor,
                               ),
-                              validator: (p0) {
-                                if (p0 == null || p0.isEmpty) {
-                                  return 'Please enter watchlist name';
-                                }
-                                return null;
-                              },
-                              controller: TextEditingController(text: e),
-                            ).paddingOnly(bottom: 16);
-                          }))
-                      .toList(),
-                ).paddingSymmetric(horizontal: 50, vertical: 20),
-              ),
-            ],
-          ),
+                            ),
+                            validator: (p0) {
+                              if (p0 == null || p0.isEmpty) {
+                                return 'Please enter watchlist name';
+                              }
+                              return null;
+                            },
+                            controller: TextEditingController(text: e),
+                          ).paddingOnly(bottom: 16);
+                        }))
+                    .toList(),
+              ).paddingSymmetric(horizontal: 50, vertical: 20),
+            ),
+          ],
         ),
-        backgroundColor: AppColors.bottomSheetBG,
-        shape: RoundedRectangleBorder());
+      ),
+      backgroundColor: AppColors.bottomSheetBG,
+      shape: RoundedRectangleBorder(),
+      isScrollControlled: true,
+    );
   }
 
   Widget searchStock(String watchlist) {
