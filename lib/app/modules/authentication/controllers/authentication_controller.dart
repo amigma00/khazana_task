@@ -68,7 +68,7 @@ class AuthenticationController extends GetxController {
 
       if (response.session?.user != null) {
         Get.find<StorageService>().saveAuthStatus('true');
-        Get.toNamed(Routes.NAVIGATION);
+        Get.offAllNamed(Routes.NAVIGATION);
       } else {
         Get.snackbar('Something went wrong', '',
             backgroundColor: Colors.black,
@@ -98,7 +98,6 @@ class AuthenticationController extends GetxController {
       onChangeRawSecond: (p0) {
         timer.value = StopWatchTimer.getDisplayTime(p0 * 1000,
             hours: false, minute: false, milliSecond: false);
-
       },
       onEnded: () => timer.value = '',
       presetMillisecond: 30 * 1000, // millisecond => minute.
